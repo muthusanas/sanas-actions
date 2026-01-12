@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks | Sanas Internal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --bg-hover: #e5e7eb;
+            --border: #e5e7eb;
+            --border-light: #d1d5db;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+            --accent: #059669;
+            --accent-dim: #047857;
+            --accent-bg: rgba(5, 150, 105, 0.1);
+            --accent-light: #d1fae5;
+            --warning: #d97706;
+            --warning-bg: rgba(217, 119, 6, 0.1);
+            --warning-light: #fef3c7;
+            --error: #dc2626;
+            --error-bg: rgba(220, 38, 38, 0.1);
+            --blue: #2563eb;
+            --blue-bg: rgba(37, 99, 235, 0.1);
+            --radius: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-text span {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dim);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-light);
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Main Layout */
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 40px;
+        }
+
+        /* Steps */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .step {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .step.active .step-number {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .step-content {
+            padding: 24px;
+        }
+
+        /* Input */
+        .input-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input {
+            flex: 1;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.15s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-bg);
+        }
+
+        .input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Action Items List */
+        .action-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto auto auto;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.15s ease;
+        }
+
+        .action-item:hover {
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-item.warning {
+            border-color: var(--warning);
+            background: var(--warning-light);
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-light);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+            background: var(--bg-primary);
+        }
+
+        .checkbox:hover {
+            border-color: var(--accent);
+        }
+
+        .checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .action-title {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-primary);
+        }
+
+        .action-assignee {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            min-width: 140px;
+        }
+
+        .action-assignee.unmatched {
+            border-color: var(--warning);
+            color: var(--warning);
+            cursor: pointer;
+            background: var(--warning-bg);
+        }
+
+        .action-assignee .avatar-sm {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .action-due {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .action-due.overdue {
+            color: var(--error);
+            font-weight: 500;
+        }
+
+        .action-remove {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.15s ease;
+        }
+
+        .action-remove:hover {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        /* Config Row */
+        .config-row {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .config-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .select {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 14px;
+            font-size: 14px;
+            color: var(--text-primary);
+            font-family: inherit;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        .select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-bg);
+        }
+
+        /* Summary */
+        .summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Status Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .badge-warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-info {
+            background: var(--blue-bg);
+            color: var(--blue);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success State */
+        .success-state {
+            text-align: center;
+            padding: 48px;
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--accent-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 24px;
+            color: var(--accent);
+        }
+
+        .success-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .success-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .created-tickets {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 24px 0;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .ticket-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.15s ease;
+        }
+
+        .ticket-link:hover {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+        }
+
+        .ticket-key {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .ticket-assignee {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: var(--bg-primary);
+            border-left: 1px solid var(--border);
+            z-index: 200;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .settings-panel.open {
+            right: 0;
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .settings-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .settings-close:hover {
+            color: var(--text-primary);
+        }
+
+        .settings-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .settings-section {
+            margin-bottom: 32px;
+        }
+
+        .settings-section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+
+        .settings-row-label {
+            font-size: 14px;
+        }
+
+        .toggle {
+            width: 44px;
+            height: 24px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .toggle.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .toggle::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.15s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle.active::after {
+            left: 22px;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 150;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 300;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+        }
+
+        .notification-text {
+            font-size: 14px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .tab:hover {
+            color: var(--text-secondary);
+        }
+
+        .tab.active {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Reminder Config */
+        .reminder-config {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+            
+            .main {
+                padding: 24px 16px;
+            }
+            
+            .action-item {
+                grid-template-columns: auto 1fr;
+                gap: 12px;
+            }
+            
+            .action-assignee,
+            .action-due,
+            .action-remove {
+                grid-column: 2;
+            }
+            
+            .config-row {
+                flex-direction: column;
+            }
+            
+            .settings-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon"><svg class="" viewBox="0 0 202 192"><path d="m201.945 0v96h-100.972c0-53.0134 45.213-96 100.972-96zm-201.945 192c55.7594 0 100.973-42.987 100.973-96h-100.973z"></path></svg></div>
+            <div class="logo-text">Sanas <span>/ Actions Items Tracker</span></div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-ghost" onclick="openSettings()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Settings
+            </button>
+            <div class="avatar">MK</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <h1 class="page-title">Create Action Items</h1>
+        <p class="page-subtitle">Extract action items from meeting notes and create Jira tickets automatically</p>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('create')">Create from Meeting</button>
+            <button class="tab" onclick="switchTab('history')">History</button>
+        </div>
+
+        <!-- Create Tab -->
+        <div id="create-tab" class="steps">
+            <!-- Step 1: Paste Notion Link -->
+            <div class="step active" id="step-1">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Paste Notion meeting notes link</div>
+                </div>
+                <div class="step-content">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            class="input" 
+                            id="notion-url"
+                            placeholder="https://www.notion.so/sanas/Meeting-Notes-..."
+                            value="https://www.notion.so/sanas/Sprint-Planning-Jan-9-abc123"
+                        >
+                        <button class="btn btn-primary" onclick="extractActions()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            Extract
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Review Actions (Initially Hidden) -->
+            <div class="step hidden" id="step-2">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Review extracted action items</div>
+                    <span class="badge badge-info" style="margin-left: auto;">AI Extracted</span>
+                </div>
+                <div class="step-content">
+                    <!-- Loading State -->
+                    <div class="loading" id="loading-state">
+                        <div class="spinner"></div>
+                        <span>Analyzing meeting notes with Claude...</span>
+                    </div>
+
+                    <!-- Action Items -->
+                    <div class="action-items hidden" id="action-items">
+                        <div class="action-item">
+                            <div class="checkbox checked" onclick="toggleCheckbox(this)"></div>
+                            <div class="action-title">Review and finalize API documentation for v2 migration</div>
+                            <div class="action-assignee">
+                                <div class="avatar-sm">JS</div>
+                                John Smith
+                            </div>
+                            <div class="action-due">Jan 15</div>
+                            <button class="action-remove" onclick="removeAction(this)">×</button>
+                        </div>
+                        <div class="action-item">
+                            <div class="checkbox checked" onclick="toggleCheckbox(this)"></div>
+                            <div class="action-title">Update deployment script to handle new environment variables</div>
+                            <div class="action-assignee">
+                                <div class="avatar-sm">SL</div>
+                                Sarah Lee
+                            </div>
+                            <div class="action-due">Jan 17</div>
+                            <button class="action-remove" onclick="removeAction(this)">×</button>
+                        </div>
+                        <div class="action-item">
+                            <div class="checkbox checked" onclick="toggleCheckbox(this)"></div>
+                            <div class="action-title">Schedule sync with DevOps to discuss CI/CD improvements</div>
+                            <div class="action-assignee">
+                                <div class="avatar-sm">MK</div>
+                                Muthu K
+                            </div>
+                            <div class="action-due">Jan 13</div>
+                            <button class="action-remove" onclick="removeAction(this)">×</button>
+                        </div>
+                        <div class="action-item warning">
+                            <div class="checkbox checked" onclick="toggleCheckbox(this)"></div>
+                            <div class="action-title">Create performance benchmarks for the new caching layer</div>
+                            <div class="action-assignee unmatched" onclick="showAssigneeDropdown(this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                Select assignee
+                            </div>
+                            <div class="action-due">Jan 20</div>
+                            <button class="action-remove" onclick="removeAction(this)">×</button>
+                        </div>
+                        <div class="action-item">
+                            <div class="checkbox checked" onclick="toggleCheckbox(this)"></div>
+                            <div class="action-title">Draft Q1 roadmap document and share with stakeholders</div>
+                            <div class="action-assignee">
+                                <div class="avatar-sm">AP</div>
+                                Anita Patel
+                            </div>
+                            <div class="action-due overdue">Jan 10</div>
+                            <button class="action-remove" onclick="removeAction(this)">×</button>
+                        </div>
+                    </div>
+
+                    <!-- Config Row -->
+                    <div class="config-row hidden" id="config-row">
+                        <div class="config-item">
+                            <label class="config-label">Jira Project</label>
+                            <select class="select">
+                                <option>SANAS</option>
+                                <option>INFRA</option>
+                                <option>PLATFORM</option>
+                            </select>
+                        </div>
+                        <div class="config-item">
+                            <label class="config-label">Issue Type</label>
+                            <select class="select">
+                                <option>Task</option>
+                                <option>Story</option>
+                                <option>Bug</option>
+                            </select>
+                        </div>
+                        <div class="config-item">
+                            <label class="config-label">Labels</label>
+                            <select class="select">
+                                <option>meeting-action</option>
+                                <option>sprint-planning</option>
+                                <option>follow-up</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Footer -->
+                <div class="summary hidden" id="summary">
+                    <div class="summary-stats">
+                        <div class="stat">
+                            <span class="stat-value" id="selected-count">5</span>
+                            <span class="stat-label">selected</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="assignee-count">4</span>
+                            <span class="stat-label">assignees</span>
+                        </div>
+                        <span class="badge badge-warning" id="unmatched-badge">1 unmatched</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="createTickets()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Create Tickets & Notify
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Success (Initially Hidden) -->
+            <div class="step hidden" id="step-3">
+                <div class="step-header">
+                    <div class="step-number">✓</div>
+                    <div class="step-title">Tickets created successfully</div>
+                </div>
+                <div class="step-content">
+                    <div class="success-state">
+                        <div class="success-icon">✓</div>
+                        <div class="success-title">5 tickets created in Jira</div>
+                        <div class="success-subtitle">Slack notifications sent to 4 team members</div>
+                        
+                        <div class="created-tickets">
+                            <a href="#" class="ticket-link">
+                                <span class="ticket-key">SANAS-456</span>
+                                <span class="ticket-assignee">John Smith</span>
+                            </a>
+                            <a href="#" class="ticket-link">
+                                <span class="ticket-key">SANAS-457</span>
+                                <span class="ticket-assignee">Sarah Lee</span>
+                            </a>
+                            <a href="#" class="ticket-link">
+                                <span class="ticket-key">SANAS-458</span>
+                                <span class="ticket-assignee">Muthu K</span>
+                            </a>
+                            <a href="#" class="ticket-link">
+                                <span class="ticket-key">SANAS-459</span>
+                                <span class="ticket-assignee">—</span>
+                            </a>
+                            <a href="#" class="ticket-link">
+                                <span class="ticket-key">SANAS-460</span>
+                                <span class="ticket-assignee">Anita Patel</span>
+                            </a>
+                        </div>
+
+                        <button class="btn btn-secondary" onclick="resetFlow()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            Create More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab (Hidden) -->
+        <div id="history-tab" class="hidden">
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <p>Meeting history will appear here</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Panel -->
+    <div class="overlay" id="overlay" onclick="closeSettings()"></div>
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-header">
+            <div class="settings-title">Settings</div>
+            <button class="settings-close" onclick="closeSettings()">×</button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <div class="settings-section-title">Reminders</div>
+                <div class="settings-row">
+                    <span class="settings-row-label">Enable weekly reminders</span>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="reminder-config" style="margin-top: 16px;">
+                    <div class="config-item">
+                        <label class="config-label">Frequency</label>
+                        <select class="select">
+                            <option>Weekly</option>
+                            <option>Bi-weekly</option>
+                            <option>Daily</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label class="config-label">Day</label>
+                        <select class="select">
+                            <option>Monday</option>
+                            <option>Tuesday</option>
+                            <option>Wednesday</option>
+                            <option>Thursday</option>
+                            <option>Friday</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label class="config-label">Time</label>
+                        <select class="select">
+                            <option>9:00 AM</option>
+                            <option>10:00 AM</option>
+                            <option>2:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-section-title">Notifications</div>
+                <div class="settings-row">
+                    <span class="settings-row-label">Notify on ticket creation</span>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="settings-row">
+                    <span class="settings-row-label">Include overdue warnings</span>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-section-title">Defaults</div>
+                <div class="config-item" style="margin-bottom: 12px;">
+                    <label class="config-label">Default Jira Project</label>
+                    <select class="select" style="width: 100%;">
+                        <option>SANAS</option>
+                        <option>INFRA</option>
+                        <option>PLATFORM</option>
+                    </select>
+                </div>
+                <div class="config-item">
+                    <label class="config-label">Default Issue Type</label>
+                    <select class="select" style="width: 100%;">
+                        <option>Task</option>
+                        <option>Story</option>
+                        <option>Bug</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-section-title">Team Mapping</div>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                    Map team member names to their Slack and Jira accounts.
+                </p>
+                <button class="btn btn-secondary" style="width: 100%;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Manage Team Mapping
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="notification" id="notification">
+        <span class="notification-icon">💬</span>
+        <span class="notification-text">Slack notification sent to John Smith</span>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('create-tab').classList.toggle('hidden', tab !== 'create');
+            document.getElementById('history-tab').classList.toggle('hidden', tab !== 'history');
+        }
+
+        // Extract actions from Notion
+        function extractActions() {
+            const url = document.getElementById('notion-url').value;
+            if (!url) return;
+
+            // Show step 2
+            document.getElementById('step-2').classList.remove('hidden');
+            document.getElementById('step-1').classList.remove('active');
+            document.getElementById('step-1').classList.add('completed');
+            document.getElementById('step-2').classList.add('active');
+
+            // Show loading
+            document.getElementById('loading-state').classList.remove('hidden');
+            document.getElementById('action-items').classList.add('hidden');
+            document.getElementById('config-row').classList.add('hidden');
+            document.getElementById('summary').classList.add('hidden');
+
+            // Simulate API call
+            setTimeout(() => {
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('action-items').classList.remove('hidden');
+                document.getElementById('config-row').classList.remove('hidden');
+                document.getElementById('summary').classList.remove('hidden');
+            }, 2000);
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(el) {
+            el.classList.toggle('checked');
+            updateCounts();
+        }
+
+        // Remove action item
+        function removeAction(btn) {
+            btn.closest('.action-item').remove();
+            updateCounts();
+        }
+
+        // Update counts
+        function updateCounts() {
+            const checked = document.querySelectorAll('.checkbox.checked').length;
+            document.getElementById('selected-count').textContent = checked;
+        }
+
+        // Show assignee dropdown (placeholder)
+        function showAssigneeDropdown(el) {
+            // In real app, show dropdown to select assignee
+            el.innerHTML = `
+                <div class="avatar-sm">RK</div>
+                Raj Kumar
+            `;
+            el.classList.remove('unmatched');
+            el.closest('.action-item').classList.remove('warning');
+            document.getElementById('unmatched-badge').classList.add('hidden');
+        }
+
+        // Create tickets
+        function createTickets() {
+            document.getElementById('step-2').classList.remove('active');
+            document.getElementById('step-2').classList.add('completed');
+            document.getElementById('step-3').classList.remove('hidden');
+            document.getElementById('step-3').classList.add('active');
+
+            // Show notifications
+            showNotification('💬 Slack notification sent to John Smith');
+            setTimeout(() => showNotification('💬 Slack notification sent to Sarah Lee'), 500);
+            setTimeout(() => showNotification('💬 Slack notification sent to Muthu K'), 1000);
+            setTimeout(() => showNotification('💬 Slack notification sent to Anita Patel'), 1500);
+        }
+
+        // Reset flow
+        function resetFlow() {
+            document.getElementById('step-1').classList.add('active');
+            document.getElementById('step-1').classList.remove('completed');
+            document.getElementById('step-2').classList.add('hidden');
+            document.getElementById('step-2').classList.remove('active', 'completed');
+            document.getElementById('step-3').classList.add('hidden');
+            document.getElementById('step-3').classList.remove('active');
+            document.getElementById('notion-url').value = '';
+        }
+
+        // Settings panel
+        function openSettings() {
+            document.getElementById('settings-panel').classList.add('open');
+            document.getElementById('overlay').classList.add('visible');
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-panel').classList.remove('open');
+            document.getElementById('overlay').classList.remove('visible');
+        }
+
+        // Toggle setting
+        function toggleSetting(el) {
+            el.classList.toggle('active');
+        }
+
+        // Show notification
+        function showNotification(text) {
+            const notification = document.getElementById('notification');
+            notification.querySelector('.notification-text').textContent = text;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
