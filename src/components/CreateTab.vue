@@ -56,92 +56,106 @@ function handleExtract(input) {
 
       <!-- Action Items -->
       <template v-else>
-        <!-- Select All Header -->
-        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-200">
-          <div
-            class="w-5 h-5 border-2 rounded cursor-pointer flex items-center justify-center transition-all duration-150 flex-shrink-0"
-            :class="allSelected
-              ? 'bg-accent border-accent text-white'
-              : someSelected
-                ? 'bg-accent/50 border-accent text-white'
-                : 'bg-white border-gray-300 hover:border-accent'"
-            @click="store.toggleAllActions"
-          >
-            <svg v-if="allSelected" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <svg v-else-if="someSelected" class="w-2 h-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
+        <div :class="{ 'opacity-60 pointer-events-none': store.currentStep > 2 }">
+          <!-- Select All Header -->
+          <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-200">
+            <div
+              class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all duration-150 flex-shrink-0"
+              :class="[
+                allSelected
+                  ? 'bg-accent border-accent text-white'
+                  : someSelected
+                    ? 'bg-accent/50 border-accent text-white'
+                    : 'bg-white border-gray-300 hover:border-accent',
+                store.currentStep > 2 ? 'cursor-not-allowed' : 'cursor-pointer'
+              ]"
+              @click="store.currentStep <= 2 && store.toggleAllActions()"
+            >
+              <svg v-if="allSelected" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <svg v-else-if="someSelected" class="w-2 h-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            <span class="text-sm text-gray-600">
+              <template v-if="allSelected">Deselect all</template>
+              <template v-else>Select all ({{ totalCount }})</template>
+            </span>
           </div>
-          <span class="text-sm text-gray-600">
-            <template v-if="allSelected">Deselect all</template>
-            <template v-else>Select all ({{ totalCount }})</template>
-          </span>
-        </div>
 
-        <div class="flex flex-col gap-3">
-          <ActionItem
-            v-for="(action, index) in store.actions"
-            :key="action.id"
-            :action="action"
-            @toggle="store.toggleAction(index)"
-            @remove="store.removeAction(index)"
-            @update="store.updateAction(index, $event)"
-          />
-        </div>
+          <div class="flex flex-col gap-3">
+            <ActionItem
+              v-for="(action, index) in store.actions"
+              :key="action.id"
+              :action="action"
+              :disabled="store.currentStep > 2"
+              @toggle="store.toggleAction(index)"
+              @remove="store.removeAction(index)"
+              @update="store.updateAction(index, $event)"
+            />
+          </div>
 
-        <!-- Config Row -->
-        <div class="flex gap-4 mt-5 pt-5 border-t border-gray-200">
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs text-gray-400 uppercase tracking-wide font-medium">Jira Project</label>
-            <select class="select" v-model="store.config.project">
-              <option>SANAS</option>
-              <option>INFRA</option>
-              <option>PLATFORM</option>
-            </select>
-          </div>
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs text-gray-400 uppercase tracking-wide font-medium">Issue Type</label>
-            <select class="select" v-model="store.config.issueType">
-              <option>Task</option>
-              <option>Story</option>
-              <option>Bug</option>
-            </select>
-          </div>
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs text-gray-400 uppercase tracking-wide font-medium">Labels</label>
-            <select class="select" v-model="store.config.label">
-              <option>meeting-action</option>
-              <option>sprint-planning</option>
-              <option>follow-up</option>
-            </select>
+          <!-- Config Row -->
+          <div class="flex gap-4 mt-5 pt-5 border-t border-gray-200">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs text-gray-400 uppercase tracking-wide font-medium">Jira Project</label>
+              <select class="select" v-model="store.config.project" :disabled="store.currentStep > 2">
+                <option>SANAS</option>
+                <option>INFRA</option>
+                <option>PLATFORM</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs text-gray-400 uppercase tracking-wide font-medium">Issue Type</label>
+              <select class="select" v-model="store.config.issueType" :disabled="store.currentStep > 2">
+                <option>Task</option>
+                <option>Story</option>
+                <option>Bug</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs text-gray-400 uppercase tracking-wide font-medium">Labels</label>
+              <select class="select" v-model="store.config.label" :disabled="store.currentStep > 2">
+                <option>meeting-action</option>
+                <option>sprint-planning</option>
+                <option>follow-up</option>
+              </select>
+            </div>
           </div>
         </div>
       </template>
 
       <!-- Summary Footer -->
       <template #footer v-if="!store.loading">
-        <div class="flex items-center justify-between px-6 py-5 bg-gray-50 border-t border-gray-200">
-          <div class="flex gap-6 items-center">
-            <div class="flex items-center gap-2">
-              <span class="text-xl font-semibold text-gray-900">{{ selectedCount }}</span>
-              <span class="text-[13px] text-gray-400">selected</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-xl font-semibold text-gray-900">{{ uniqueAssignees }}</span>
-              <span class="text-[13px] text-gray-400">assignees</span>
-            </div>
-            <span v-if="unmatchedCount > 0" class="badge badge-warning">
-              {{ unmatchedCount }} unmatched
-            </span>
+        <div
+          class="flex items-center justify-end gap-6 px-6 py-5 bg-gray-50 border-t border-gray-200"
+          :class="{ 'opacity-60': store.currentStep > 2 }"
+        >
+          <span v-if="unmatchedCount > 0" class="badge badge-warning">
+            {{ unmatchedCount }} unmatched
+          </span>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-semibold text-gray-900">{{ selectedCount }}</span>
+            <span class="text-[13px] text-gray-400">selected</span>
           </div>
-          <button class="btn btn-primary" @click="store.createTickets">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-semibold text-gray-900">{{ uniqueAssignees }}</span>
+            <span class="text-[13px] text-gray-400">assignees</span>
+          </div>
+          <button
+            class="btn btn-primary"
+            :disabled="store.currentStep > 2"
+            @click="store.createTickets"
+          >
+            <svg v-if="store.currentStep <= 2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
-            Create Tickets & Notify
+            <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            {{ store.currentStep > 2 ? 'Tickets Created' : 'Create Tickets & Notify' }}
           </button>
         </div>
       </template>

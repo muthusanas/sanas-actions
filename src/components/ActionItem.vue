@@ -5,6 +5,7 @@ import { getInitials } from '../utils'
 
 const props = defineProps({
   action: { type: Object, required: true },
+  disabled: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['toggle', 'remove', 'update'])
@@ -71,11 +72,14 @@ function saveDueDate(event) {
   >
     <!-- Checkbox -->
     <div
-      class="w-5 h-5 border-2 rounded cursor-pointer flex items-center justify-center transition-all duration-150 flex-shrink-0"
-      :class="action.selected
-        ? 'bg-accent border-accent text-white'
-        : 'bg-white border-gray-300 hover:border-accent'"
-      @click="emit('toggle')"
+      class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all duration-150 flex-shrink-0"
+      :class="[
+        action.selected
+          ? 'bg-accent border-accent text-white'
+          : 'bg-white border-gray-300 hover:border-accent',
+        disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+      ]"
+      @click="!disabled && emit('toggle')"
     >
       <svg v-if="action.selected" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
         <polyline points="20 6 9 17 4 12" />
@@ -85,7 +89,7 @@ function saveDueDate(event) {
     <!-- Title (Editable) -->
     <div class="min-w-0">
       <input
-        v-if="editingTitle"
+        v-if="editingTitle && !disabled"
         ref="titleInput"
         type="text"
         :value="action.title"
@@ -95,8 +99,9 @@ function saveDueDate(event) {
       />
       <div
         v-else
-        class="text-sm text-gray-900 cursor-text hover:bg-white hover:px-2 hover:py-1 hover:-mx-2 hover:-my-1 hover:rounded transition-all truncate"
-        @click="startEditingTitle"
+        class="text-sm text-gray-900 truncate"
+        :class="disabled ? 'cursor-default' : 'cursor-text hover:bg-white hover:px-2 hover:py-1 hover:-mx-2 hover:-my-1 hover:rounded transition-all'"
+        @click="!disabled && startEditingTitle()"
         :title="action.title"
       >
         {{ action.title }}
@@ -106,9 +111,12 @@ function saveDueDate(event) {
     <!-- Assignee (Editable Dropdown) -->
     <div class="relative">
       <div
-        class="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-[13px] text-gray-600 min-w-[140px] cursor-pointer hover:border-gray-300 transition-all"
-        :class="{ 'border-warning text-warning bg-warning/10': !action.assignee }"
-        @click="editingAssignee = !editingAssignee"
+        class="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-[13px] text-gray-600 min-w-[140px] transition-all"
+        :class="[
+          { 'border-warning text-warning bg-warning/10': !action.assignee },
+          disabled ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:border-gray-300'
+        ]"
+        @click="!disabled && (editingAssignee = !editingAssignee)"
       >
         <template v-if="action.assignee">
           <div class="w-5 h-5 rounded-full bg-accent-light flex items-center justify-center text-[10px] font-semibold text-accent">
@@ -166,7 +174,7 @@ function saveDueDate(event) {
     <!-- Due Date (Editable) -->
     <div class="relative">
       <input
-        v-if="editingDueDate"
+        v-if="editingDueDate && !disabled"
         ref="dueDateInput"
         type="date"
         class="text-[13px] font-mono bg-white border border-accent rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-accent/20"
@@ -175,9 +183,12 @@ function saveDueDate(event) {
       />
       <div
         v-else
-        class="text-[13px] text-gray-400 font-mono min-w-[80px] text-right cursor-pointer hover:text-gray-600 transition-colors"
-        :class="{ 'text-error font-medium': action.overdue }"
-        @click="startEditingDueDate"
+        class="text-[13px] text-gray-400 font-mono min-w-[80px] text-right"
+        :class="[
+          { 'text-error font-medium': action.overdue },
+          disabled ? 'cursor-default' : 'cursor-pointer hover:text-gray-600 transition-colors'
+        ]"
+        @click="!disabled && startEditingDueDate()"
       >
         {{ action.dueDate }}
       </div>
@@ -185,8 +196,10 @@ function saveDueDate(event) {
 
     <!-- Remove Button -->
     <button
-      class="w-7 h-7 rounded flex items-center justify-center text-gray-400 hover:bg-error/10 hover:text-error transition-all duration-150"
-      @click="emit('remove')"
+      class="w-7 h-7 rounded flex items-center justify-center text-gray-400 transition-all duration-150"
+      :class="disabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-error/10 hover:text-error'"
+      :disabled="disabled"
+      @click="!disabled && emit('remove')"
     >
       ×
     </button>
