@@ -65,8 +65,8 @@ export const useActionsStore = defineStore('actions', () => {
     actions.value.splice(index, 1)
   }
 
-  function assignAction(index, assignee) {
-    actions.value[index].assignee = assignee
+  function updateAction(index, updates) {
+    actions.value[index] = { ...actions.value[index], ...updates }
   }
 
   function createTickets() {
@@ -119,7 +119,7 @@ export const useActionsStore = defineStore('actions', () => {
     extractActions,
     toggleAction,
     removeAction,
-    assignAction,
+    updateAction,
     createTickets,
     reset,
   }

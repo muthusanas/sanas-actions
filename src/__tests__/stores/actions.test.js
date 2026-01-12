@@ -144,23 +144,53 @@ describe('useActionsStore', () => {
     })
   })
 
-  describe('assignAction', () => {
-    it('assigns assignee to action', () => {
+  describe('updateAction', () => {
+    it('updates assignee', () => {
       const store = useActionsStore()
-      store.actions = [{ id: 1, assignee: null }]
+      store.actions = [{ id: 1, title: 'Task', assignee: null }]
 
-      store.assignAction(0, 'John Smith')
+      store.updateAction(0, { assignee: 'John Smith' })
 
       expect(store.actions[0].assignee).toBe('John Smith')
     })
 
-    it('can reassign to different assignee', () => {
+    it('updates title', () => {
+      const store = useActionsStore()
+      store.actions = [{ id: 1, title: 'Old title', assignee: 'John' }]
+
+      store.updateAction(0, { title: 'New title' })
+
+      expect(store.actions[0].title).toBe('New title')
+      expect(store.actions[0].assignee).toBe('John') // unchanged
+    })
+
+    it('updates due date', () => {
+      const store = useActionsStore()
+      store.actions = [{ id: 1, title: 'Task', dueDate: 'Jan 10' }]
+
+      store.updateAction(0, { dueDate: 'Jan 20' })
+
+      expect(store.actions[0].dueDate).toBe('Jan 20')
+    })
+
+    it('updates multiple fields at once', () => {
+      const store = useActionsStore()
+      store.actions = [{ id: 1, title: 'Old', assignee: null, dueDate: 'Jan 10' }]
+
+      store.updateAction(0, { title: 'New', assignee: 'Jane Doe' })
+
+      expect(store.actions[0].title).toBe('New')
+      expect(store.actions[0].assignee).toBe('Jane Doe')
+      expect(store.actions[0].dueDate).toBe('Jan 10') // unchanged
+    })
+
+    it('can clear assignee by setting to null', () => {
       const store = useActionsStore()
       store.actions = [{ id: 1, assignee: 'John Smith' }]
 
-      store.assignAction(0, 'Jane Doe')
+      store.updateAction(0, { assignee: null })
 
-      expect(store.actions[0].assignee).toBe('Jane Doe')
+      expect(store.actions[0].assignee).toBeNull()
     })
   })
 

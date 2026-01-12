@@ -60,7 +60,7 @@ function handleExtract(input) {
             :action="action"
             @toggle="store.toggleAction(index)"
             @remove="store.removeAction(index)"
-            @assign="store.assignAction(index, $event)"
+            @update="store.updateAction(index, $event)"
           />
         </div>
 
