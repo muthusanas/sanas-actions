@@ -24,6 +24,16 @@ describe('useActionsStore', () => {
       expect(store.actions).toEqual([])
     })
 
+    it('starts with empty meetingText', () => {
+      const store = useActionsStore()
+      expect(store.meetingText).toBe('')
+    })
+
+    it('starts with null uploadedFile', () => {
+      const store = useActionsStore()
+      expect(store.uploadedFile).toBeNull()
+    })
+
     it('has default config values', () => {
       const store = useActionsStore()
       expect(store.config.project).toBe('SANAS')
@@ -33,26 +43,49 @@ describe('useActionsStore', () => {
   })
 
   describe('extractActions', () => {
-    it('does nothing if notionUrl is empty', () => {
+    it('does nothing if input is null', () => {
       const store = useActionsStore()
-      store.notionUrl = ''
-      store.extractActions()
+      store.extractActions(null)
       expect(store.currentStep).toBe(1)
       expect(store.loading).toBe(false)
     })
 
-    it('sets loading and advances to step 2', () => {
+    it('does nothing if text input is empty', () => {
       const store = useActionsStore()
-      store.notionUrl = 'https://notion.so/test'
-      store.extractActions()
+      store.extractActions({ type: 'text', content: '   ' })
+      expect(store.currentStep).toBe(1)
+      expect(store.loading).toBe(false)
+    })
+
+    it('does nothing if file input is missing file', () => {
+      const store = useActionsStore()
+      store.extractActions({ type: 'file', file: null })
+      expect(store.currentStep).toBe(1)
+      expect(store.loading).toBe(false)
+    })
+
+    it('sets loading and advances to step 2 for text input', () => {
+      const store = useActionsStore()
+      store.extractActions({ type: 'text', content: 'Meeting notes here' })
       expect(store.currentStep).toBe(2)
       expect(store.loading).toBe(true)
+      expect(store.inputType).toBe('text')
+      expect(store.meetingText).toBe('Meeting notes here')
+    })
+
+    it('sets loading and advances to step 2 for file input', () => {
+      const store = useActionsStore()
+      const mockFile = new File(['content'], 'notes.txt', { type: 'text/plain' })
+      store.extractActions({ type: 'file', file: mockFile })
+      expect(store.currentStep).toBe(2)
+      expect(store.loading).toBe(true)
+      expect(store.inputType).toBe('file')
+      expect(store.uploadedFile).toBe(mockFile)
     })
 
     it('populates actions after timeout', () => {
       const store = useActionsStore()
-      store.notionUrl = 'https://notion.so/test'
-      store.extractActions()
+      store.extractActions({ type: 'text', content: 'Meeting notes' })
 
       vi.runAllTimers()
 
@@ -170,7 +203,9 @@ describe('useActionsStore', () => {
       const store = useActionsStore()
       store.currentStep = 3
       store.loading = true
-      store.notionUrl = 'https://notion.so/test'
+      store.meetingText = 'Some meeting notes'
+      store.uploadedFile = new File([''], 'test.txt')
+      store.inputType = 'text'
       store.actions = [{ id: 1 }]
       store.createdTickets = [{ key: 'TEST-1' }]
 
@@ -178,7 +213,9 @@ describe('useActionsStore', () => {
 
       expect(store.currentStep).toBe(1)
       expect(store.loading).toBe(false)
-      expect(store.notionUrl).toBe('')
+      expect(store.meetingText).toBe('')
+      expect(store.uploadedFile).toBeNull()
+      expect(store.inputType).toBeNull()
       expect(store.actions).toEqual([])
       expect(store.createdTickets).toEqual([])
     })

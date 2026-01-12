@@ -18,3 +18,16 @@ export const TEAM_MEMBERS = [
   { initials: 'AP', name: 'Anita Patel' },
   { initials: 'RK', name: 'Raj Kumar' },
 ]
+
+// Supported file types for upload
+export const FILE_UPLOAD = {
+  ACCEPTED_EXTENSIONS: ['.pdf', '.docx', '.doc', '.md', '.txt'],
+  ACCEPTED_MIME_TYPES: [
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/msword',
+    'text/markdown',
+    'text/plain',
+  ],
+  MAX_SIZE_MB: 10,
+}

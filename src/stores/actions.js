@@ -7,7 +7,9 @@ import { getUniqueValues } from '../utils'
 export const useActionsStore = defineStore('actions', () => {
   const currentStep = ref(1)
   const loading = ref(false)
-  const notionUrl = ref('https://www.notion.so/sanas/Sprint-Planning-Jan-9-abc123')
+  const meetingText = ref('')
+  const uploadedFile = ref(null)
+  const inputType = ref(null) // 'text' or 'file'
 
   const actions = ref([])
   const createdTickets = ref([])
@@ -28,13 +30,27 @@ export const useActionsStore = defineStore('actions', () => {
     { id: 5, title: 'Draft Q1 roadmap document and share with stakeholders', assignee: 'Anita Patel', dueDate: 'Jan 10', selected: true, overdue: true },
   ]
 
-  function extractActions() {
-    if (!notionUrl.value) return
+  function extractActions(input) {
+    if (!input) return
+
+    const { type, content, file } = input
+
+    // Validate input based on type
+    if (type === 'text' && !content?.trim()) return
+    if (type === 'file' && !file) return
+
+    inputType.value = type
+    if (type === 'text') {
+      meetingText.value = content
+    } else {
+      uploadedFile.value = file
+    }
 
     currentStep.value = 2
     loading.value = true
 
-    // Simulate API call
+    // Simulate API call to AI extraction service
+    // In production, this would send text or file to backend for processing
     setTimeout(() => {
       actions.value = sampleActions.map(a => ({ ...a }))
       loading.value = false
@@ -84,7 +100,9 @@ export const useActionsStore = defineStore('actions', () => {
 
     currentStep.value = 1
     loading.value = false
-    notionUrl.value = ''
+    meetingText.value = ''
+    uploadedFile.value = null
+    inputType.value = null
     actions.value = []
     createdTickets.value = []
   }
@@ -92,7 +110,9 @@ export const useActionsStore = defineStore('actions', () => {
   return {
     currentStep,
     loading,
-    notionUrl,
+    meetingText,
+    uploadedFile,
+    inputType,
     actions,
     config,
     createdTickets,

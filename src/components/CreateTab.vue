@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useActionsStore } from '../stores/actions'
 import StepCard from './StepCard.vue'
+import MeetingInput from './MeetingInput.vue'
 import ActionItem from './ActionItem.vue'
 import SuccessState from './SuccessState.vue'
 
@@ -10,31 +11,26 @@ const store = useActionsStore()
 const selectedCount = computed(() => store.actions.filter(a => a.selected).length)
 const uniqueAssignees = computed(() => new Set(store.actions.filter(a => a.selected && a.assignee).map(a => a.assignee)).size)
 const unmatchedCount = computed(() => store.actions.filter(a => a.selected && !a.assignee).length)
+
+function handleExtract(input) {
+  store.extractActions(input)
+}
 </script>
 
 <template>
   <div class="flex flex-col gap-6">
-    <!-- Step 1: Paste Notion Link -->
+    <!-- Step 1: Input Meeting Notes -->
     <StepCard
       :step="1"
-      title="Paste Notion meeting notes link"
+      title="Add meeting notes"
       :active="store.currentStep === 1"
       :completed="store.currentStep > 1"
     >
-      <div class="flex gap-3">
-        <input
-          type="text"
-          class="input"
-          placeholder="https://www.notion.so/sanas/Meeting-Notes-..."
-          v-model="store.notionUrl"
-        />
-        <button class="btn btn-primary" @click="store.extractActions">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-          </svg>
-          Extract
-        </button>
-      </div>
+      <MeetingInput
+        v-model="store.meetingText"
+        :disabled="store.currentStep > 1"
+        @extract="handleExtract"
+      />
     </StepCard>
 
     <!-- Step 2: Review Actions -->
