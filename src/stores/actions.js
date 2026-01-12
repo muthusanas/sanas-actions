@@ -61,6 +61,12 @@ export const useActionsStore = defineStore('actions', () => {
     actions.value[index].selected = !actions.value[index].selected
   }
 
+  function toggleAllActions() {
+    const allSelected = actions.value.every(a => a.selected)
+    const newState = !allSelected
+    actions.value.forEach(a => a.selected = newState)
+  }
+
   function removeAction(index) {
     actions.value.splice(index, 1)
   }
@@ -118,6 +124,7 @@ export const useActionsStore = defineStore('actions', () => {
     createdTickets,
     extractActions,
     toggleAction,
+    toggleAllActions,
     removeAction,
     updateAction,
     createTickets,

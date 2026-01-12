@@ -9,6 +9,9 @@ import SuccessState from './SuccessState.vue'
 const store = useActionsStore()
 
 const selectedCount = computed(() => store.actions.filter(a => a.selected).length)
+const totalCount = computed(() => store.actions.length)
+const allSelected = computed(() => totalCount.value > 0 && selectedCount.value === totalCount.value)
+const someSelected = computed(() => selectedCount.value > 0 && selectedCount.value < totalCount.value)
 const uniqueAssignees = computed(() => new Set(store.actions.filter(a => a.selected && a.assignee).map(a => a.assignee)).size)
 const unmatchedCount = computed(() => store.actions.filter(a => a.selected && !a.assignee).length)
 
@@ -53,6 +56,30 @@ function handleExtract(input) {
 
       <!-- Action Items -->
       <template v-else>
+        <!-- Select All Header -->
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-200">
+          <div
+            class="w-5 h-5 border-2 rounded cursor-pointer flex items-center justify-center transition-all duration-150 flex-shrink-0"
+            :class="allSelected
+              ? 'bg-accent border-accent text-white'
+              : someSelected
+                ? 'bg-accent/50 border-accent text-white'
+                : 'bg-white border-gray-300 hover:border-accent'"
+            @click="store.toggleAllActions"
+          >
+            <svg v-if="allSelected" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <svg v-else-if="someSelected" class="w-2 h-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </div>
+          <span class="text-sm text-gray-600">
+            <template v-if="allSelected">Deselect all</template>
+            <template v-else>Select all ({{ totalCount }})</template>
+          </span>
+        </div>
+
         <div class="flex flex-col gap-3">
           <ActionItem
             v-for="(action, index) in store.actions"

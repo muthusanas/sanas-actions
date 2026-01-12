@@ -107,6 +107,54 @@ describe('useActionsStore', () => {
     })
   })
 
+  describe('toggleAllActions', () => {
+    it('selects all when none are selected', () => {
+      const store = useActionsStore()
+      store.actions = [
+        { id: 1, selected: false },
+        { id: 2, selected: false },
+        { id: 3, selected: false },
+      ]
+
+      store.toggleAllActions()
+
+      expect(store.actions.every(a => a.selected)).toBe(true)
+    })
+
+    it('selects all when some are selected', () => {
+      const store = useActionsStore()
+      store.actions = [
+        { id: 1, selected: true },
+        { id: 2, selected: false },
+        { id: 3, selected: true },
+      ]
+
+      store.toggleAllActions()
+
+      expect(store.actions.every(a => a.selected)).toBe(true)
+    })
+
+    it('deselects all when all are selected', () => {
+      const store = useActionsStore()
+      store.actions = [
+        { id: 1, selected: true },
+        { id: 2, selected: true },
+        { id: 3, selected: true },
+      ]
+
+      store.toggleAllActions()
+
+      expect(store.actions.every(a => !a.selected)).toBe(true)
+    })
+
+    it('handles empty actions array', () => {
+      const store = useActionsStore()
+      store.actions = []
+
+      expect(() => store.toggleAllActions()).not.toThrow()
+    })
+  })
+
   describe('removeAction', () => {
     it('removes action at index', () => {
       const store = useActionsStore()
