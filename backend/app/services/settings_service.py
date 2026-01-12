@@ -1,4 +1,4 @@
-"""Service for managing settings and team members."""
+"""Service for managing settings and team members using SQLite."""
 from app.config import settings as app_settings
 from app.models import (
     TeamMember,
@@ -10,31 +10,39 @@ from app.models import (
     DefaultSettings,
     IntegrationStatus,
 )
+from app.database import (
+    get_all_team_members,
+    get_team_member_by_id,
+    create_team_member as db_create_team_member,
+    update_team_member as db_update_team_member,
+    delete_team_member as db_delete_team_member,
+    get_user_settings,
+    save_user_settings,
+    init_db,
+)
+
+# Initialize database on module load
+init_db()
 
 
 class SettingsService:
-    """Service for managing user settings and team members."""
-
-    def __init__(self):
-        """Initialize the settings service."""
-        self._settings = UserSettings(
-            reminders=ReminderSettings(),
-            notifications=NotificationSettings(),
-            defaults=DefaultSettings(),
-        )
-        self._team_members: list[TeamMember] = []
-        self._next_member_id = 1
+    """Service for managing user settings and team members using SQLite."""
 
     def get_settings(self) -> UserSettings:
-        """Get the current user settings.
+        """Get the current user settings from database.
 
         Returns:
             UserSettings object with current settings.
         """
-        return self._settings
+        data = get_user_settings()
+        return UserSettings(
+            reminders=ReminderSettings(**data.get("reminders", {})),
+            notifications=NotificationSettings(**data.get("notifications", {})),
+            defaults=DefaultSettings(**data.get("defaults", {})),
+        )
 
     def update_settings(self, new_settings: UserSettings) -> UserSettings:
-        """Update user settings.
+        """Update user settings in database.
 
         Args:
             new_settings: New settings to apply.
@@ -42,16 +50,22 @@ class SettingsService:
         Returns:
             Updated UserSettings object.
         """
-        self._settings = new_settings
-        return self._settings
+        data = {
+            "reminders": new_settings.reminders.model_dump(),
+            "notifications": new_settings.notifications.model_dump(),
+            "defaults": new_settings.defaults.model_dump(),
+        }
+        save_user_settings(data)
+        return new_settings
 
     def get_team_members(self) -> list[TeamMember]:
-        """Get all team members.
+        """Get all team members from database.
 
         Returns:
             List of TeamMember objects.
         """
-        return self._team_members
+        rows = get_all_team_members()
+        return [TeamMember(**row) for row in rows]
 
     def get_team_member(self, member_id: int) -> TeamMember | None:
         """Get a team member by ID.
@@ -62,13 +76,11 @@ class SettingsService:
         Returns:
             TeamMember if found, None otherwise.
         """
-        for member in self._team_members:
-            if member.id == member_id:
-                return member
-        return None
+        row = get_team_member_by_id(member_id)
+        return TeamMember(**row) if row else None
 
     def add_team_member(self, data: TeamMemberCreate) -> TeamMember:
-        """Add a new team member.
+        """Add a new team member to database.
 
         Args:
             data: TeamMemberCreate data.
@@ -76,30 +88,19 @@ class SettingsService:
         Returns:
             Created TeamMember object.
         """
-        # Auto-generate initials if not provided
-        initials = data.initials
-        if not initials:
-            name_parts = data.name.split()
-            initials = "".join(part[0].upper() for part in name_parts if part)
-
-        member = TeamMember(
-            id=self._next_member_id,
+        row = db_create_team_member(
             name=data.name,
-            initials=initials,
+            initials=data.initials,
             slack_id=data.slack_id,
             jira_account_id=data.jira_account_id,
             email=data.email,
         )
-
-        self._team_members.append(member)
-        self._next_member_id += 1
-
-        return member
+        return TeamMember(**row)
 
     def update_team_member(
         self, member_id: int, data: TeamMemberUpdate
     ) -> TeamMember | None:
-        """Update a team member.
+        """Update a team member in database.
 
         Args:
             member_id: The member's ID.
@@ -108,27 +109,12 @@ class SettingsService:
         Returns:
             Updated TeamMember if found, None otherwise.
         """
-        index = self._find_member_index(member_id)
-        if index is None:
-            return None
-
-        member = self._team_members[index]
         update_fields = data.model_dump(exclude_unset=True)
-        updated_data = {**member.model_dump(), **update_fields}
-
-        updated_member = TeamMember(**updated_data)
-        self._team_members[index] = updated_member
-        return updated_member
-
-    def _find_member_index(self, member_id: int) -> int | None:
-        """Find the index of a team member by ID."""
-        for i, member in enumerate(self._team_members):
-            if member.id == member_id:
-                return i
-        return None
+        row = db_update_team_member(member_id, **update_fields)
+        return TeamMember(**row) if row else None
 
     def delete_team_member(self, member_id: int) -> bool:
-        """Delete a team member.
+        """Delete a team member from database.
 
         Args:
             member_id: The member's ID.
@@ -136,12 +122,7 @@ class SettingsService:
         Returns:
             True if deleted, False if not found.
         """
-        index = self._find_member_index(member_id)
-        if index is None:
-            return False
-
-        del self._team_members[index]
-        return True
+        return db_delete_team_member(member_id)
 
     def get_integration_status(self) -> IntegrationStatus:
         """Get the status of external integrations.
@@ -182,6 +163,11 @@ def update_settings(new_settings: UserSettings) -> UserSettings:
 def get_team_members() -> list[TeamMember]:
     """Get all team members."""
     return _settings_service.get_team_members()
+
+
+def get_team_member(member_id: int) -> TeamMember | None:
+    """Get a team member by ID."""
+    return _settings_service.get_team_member(member_id)
 
 
 def add_team_member(data: TeamMemberCreate) -> TeamMember:

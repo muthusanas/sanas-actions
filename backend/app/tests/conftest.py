@@ -1,6 +1,34 @@
 """Pytest configuration and fixtures."""
 import pytest
+import tempfile
+import os
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
+
+import app.database as database
+
+
+@pytest.fixture(autouse=True)
+def isolated_test_db(tmp_path):
+    """Use an isolated test database for each test.
+
+    This fixture automatically applies to all tests and ensures
+    database state doesn't leak between tests.
+    """
+    # Store original DB path
+    original_db_path = database.DB_PATH
+
+    # Set up test database path
+    test_db_path = tmp_path / "test_sanas.db"
+    database.DB_PATH = test_db_path
+
+    # Initialize the test database
+    database.init_db()
+
+    yield test_db_path
+
+    # Restore original DB path
+    database.DB_PATH = original_db_path
 
 
 @pytest.fixture

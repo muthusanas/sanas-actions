@@ -54,6 +54,12 @@ function handleExtract(input) {
         <span>Analyzing meeting notes with Claude...</span>
       </div>
 
+      <!-- Error State -->
+      <div v-else-if="store.error" class="py-8 text-center">
+        <div class="text-error mb-2">{{ store.error }}</div>
+        <button class="btn btn-secondary" @click="store.reset">Try Again</button>
+      </div>
+
       <!-- Action Items -->
       <template v-else>
         <div :class="{ 'opacity-60 pointer-events-none': store.currentStep > 2 }">

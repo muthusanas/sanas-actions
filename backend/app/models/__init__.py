@@ -33,6 +33,7 @@ from .analytics import (
     AnalyticsStats,
     TeamMemberStats,
     WeeklyTrend,
+    PendingActionItem,
     AnalyticsResponse,
 )
 
@@ -62,5 +63,6 @@ __all__ = [
     "AnalyticsStats",
     "TeamMemberStats",
     "WeeklyTrend",
+    "PendingActionItem",
     "AnalyticsResponse",
 ]

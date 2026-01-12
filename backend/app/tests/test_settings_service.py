@@ -119,15 +119,15 @@ class TestTeamMemberManagement:
 
     @pytest.fixture
     def service(self):
-        """Create a SettingsService instance with empty team."""
-        service = SettingsService()
-        service._team_members = []
-        return service
+        """Create a SettingsService instance."""
+        return SettingsService()
 
-    def test_get_team_members_empty(self, service):
-        """Test getting empty team members list."""
+    def test_get_team_members_returns_seeded_data(self, service):
+        """Test getting team members returns default seeded data."""
         members = service.get_team_members()
-        assert members == []
+        # Database seeds 4 default team members
+        assert len(members) >= 4
+        assert all(isinstance(m, TeamMember) for m in members)
 
     def test_add_team_member(self, service):
         """Test adding a new team member."""
@@ -219,21 +219,6 @@ class TestTeamMemberManagement:
         """Test deleting non-existent member returns False."""
         result = service.delete_team_member(999)
         assert result is False
-
-    def test_find_member_index_found(self, service):
-        """Test _find_member_index returns correct index."""
-        service.add_team_member(TeamMemberCreate(name="John Smith"))
-        member2 = service.add_team_member(TeamMemberCreate(name="Sarah Lee"))
-
-        index = service._find_member_index(member2.id)
-
-        assert index == 1
-
-    def test_find_member_index_not_found(self, service):
-        """Test _find_member_index returns None for non-existent ID."""
-        index = service._find_member_index(999)
-
-        assert index is None
 
     def test_update_preserves_unset_fields(self, service):
         """Test update only changes fields that are explicitly set."""

@@ -7,6 +7,7 @@ class AnalyticsStats(BaseModel):
 
     completed_this_week: int = Field(default=0, description="Actions completed this week")
     pending_actions: int = Field(default=0, description="Number of pending actions")
+    overdue_count: int = Field(default=0, description="Number of overdue actions")
     active_team_members: int = Field(default=0, description="Number of active team members")
 
 
@@ -29,10 +30,23 @@ class WeeklyTrend(BaseModel):
     completed: int = Field(default=0, description="Number of completed actions")
 
 
+class PendingActionItem(BaseModel):
+    """Pending action item for analytics."""
+
+    id: int = Field(..., description="Action item ID")
+    title: str = Field(..., description="Action item title")
+    assignee: str | None = Field(None, description="Assigned team member name")
+    due_date: str | None = Field(None, description="Due date")
+    overdue: bool = Field(default=False, description="Whether item is overdue")
+
+
 class AnalyticsResponse(BaseModel):
     """Complete analytics response."""
 
     stats: AnalyticsStats = Field(default_factory=AnalyticsStats)
+    pending_items: list[PendingActionItem] = Field(
+        default_factory=list, description="List of pending action items"
+    )
     leaderboard: list[TeamMemberStats] = Field(
         default_factory=list, description="Team leaderboard sorted by completion"
     )
