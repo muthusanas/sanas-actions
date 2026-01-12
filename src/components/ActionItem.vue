@@ -71,13 +71,15 @@ function saveDueDate(event) {
   >
     <!-- Checkbox -->
     <div
-      class="w-5 h-5 border-2 rounded cursor-pointer flex items-center justify-center transition-all duration-150 flex-shrink-0 bg-white"
+      class="w-5 h-5 border-2 rounded cursor-pointer flex items-center justify-center transition-all duration-150 flex-shrink-0"
       :class="action.selected
-        ? 'bg-accent border-accent'
-        : 'border-gray-300 hover:border-accent'"
+        ? 'bg-accent border-accent text-white'
+        : 'bg-white border-gray-300 hover:border-accent'"
       @click="emit('toggle')"
     >
-      <span v-if="action.selected" class="text-white text-xs font-bold">✓</span>
+      <svg v-if="action.selected" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
     </div>
 
     <!-- Title (Editable) -->
